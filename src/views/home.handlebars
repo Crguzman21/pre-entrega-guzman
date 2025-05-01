@@ -5,16 +5,22 @@
     <title>Home - Productos</title>
 </head>
 <body>
-<h1>Lista de productos</h1>
+<h1 class="mb-4">📦 Lista de Productos</h1>
 
-<ul>
+<ul class="list-group">
     {{#each products}}
-        <li>{{this.title}} - ${{this.price}}</li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{this.title}}</span>
+            <span class="badge bg-secondary">${{this.price}}</span>
+        </li>
     {{/each}}
 </ul>
 
 <br>
 
-<a href="/realtimeproducts">Ir a Productos en Tiempo Real</a>
+<a href="/realtimeproducts" class="btn btn-outline-primary">
+    🔄 Ir a Productos en Tiempo Real
+</a>
+
 </body>
 </html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos en Tiempo Real</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+    <h1 class="mb-4">🛒 Productos en tiempo real</h1>
+    <ul id="productsList"></ul>
+
+    <h2>Agregar Producto</h2>
+
+    <form id="product-form" class="row g-3">
+        <div class="col-md-6">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Título del producto"
+                id="title"
+                required
+            />
+        </div>
+
+        <div class="col-md-4">
+            <input
+                type="number"
+                class="form-control"
+                placeholder="Precio"
+                id="price"
+                min="0"
+                required
+            />
+        </div>
+
+        <div class="col-md-2">
+            <input
+                type="number"
+                class="form-control"
+                placeholder="Stock"
+                id="stock"
+                min="0"
+                required
+            />
+        </div>
+
+        <div class="col-md-4">
+            <select id="category" class="form-select" required>
+                <option value="" disabled selected>Seleccionar categoría</option>
+                <option value="tecnologia">Tecnología</option>
+                <option value="hogar">Hogar</option>
+                <option value="ropa">Ropa</option>
+                <option value="juguetes">Juguetes</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <input
+                type="url"
+                id="thumbnail"
+                class="form-control"
+                placeholder="URL de la imagen"
+                required
+            />
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">
+                Agregar
+            </button>
+        </div>
+    </form>
+
+
+    <h2 class="mb-4">🗑️ Eliminar Producto</h2>
+
+    <form id="deleteForm" class="row g-3 align-items-center">
+        <div class="col-md-6">
+            <input
+                type="text"
+                id="productId"
+                class="form-control"
+                placeholder="ID del producto"
+                required
+            />
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-danger w-100">
+            Eliminar
+            </button>
+        </div>
+    </form>
+
+<hr class="my-4" />
+
+<a href="/" class="btn btn-outline-secondary">
+    ⬅️ Volver al Home
+</a>
+
+
+    <script>
+    const socket = io();
+
+    const productForm = document.getElementById('productForm');
+    const deleteForm = document.getElementById('deleteForm');
+    const productsList = document.getElementById('productsList');
+
+    productForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('title').value;
+        const price = document.getElementById('price').value;
+
+        socket.emit('new-product', { title, price });
+        productForm.reset();
+    });
+
+    deleteForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const productId = document.getElementById('productId').value;
+        socket.emit('delete-product', productId);
+        deleteForm.reset();
+    });
+
+    socket.on('update-products', (products) => {
+        productsList.innerHTML = '';
+        products.forEach(product => {
+        productsList.innerHTML += `<li>${product.title} - $${product.price} (ID: ${product.id})</li>`;
+    });
+    });
+    <hr class="my-4" />
+
+    <ul class="list-group" id="product-list">
+        {{#each products}}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{this.title}}</span>
+            <span class="badge bg-success rounded-pill">$ {{this.price}}</span>
+        </li>
+        {{/each}}
+    </ul>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/realtime.js"></script>
+    </script>
+</body>
+</html>
